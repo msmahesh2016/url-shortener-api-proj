@@ -81,6 +81,35 @@ app.MapGet("/api/url/public", async (AppDbContext db) =>
         .ToListAsync();
 });
 
+app.MapGet("/api/url/search", async (AppDbContext db, string term) =>
+{
+    return await db.Urls
+        .Where(x => x.OriginalUrl.Contains(term))
+        .ToListAsync();
+});
 
+app.MapDelete("/api/url/{id}", async (AppDbContext db, int id) =>
+{
+    var url = await db.Urls.FindAsync(id);
+    if (url == null) return Results.NotFound();
+
+    db.Urls.Remove(url);
+    await db.SaveChangesAsync();
+
+    return Results.Ok();
+});
+
+app.MapGet("/{code}", async (AppDbContext db, string code) =>
+{
+    var url = await db.Urls.FirstOrDefaultAsync(x => x.ShortCode == code);
+
+    if (url == null)
+        return Results.NotFound();
+
+    url.ClickCount++;
+    await db.SaveChangesAsync();
+
+    return Results.Redirect(url.OriginalUrl);
+});
 
 app.Run();
