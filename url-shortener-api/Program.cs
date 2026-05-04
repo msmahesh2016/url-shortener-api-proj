@@ -73,6 +73,8 @@ app.MapPost("/api/url", async (AppDbContext db, UrlMapping req) =>
     return Results.Ok(req);
 });
 
+app.MapGet("/test", () => "API working");
+
 app.MapGet("/api/url/public", async (AppDbContext db) =>
 {
     return await db.Urls
