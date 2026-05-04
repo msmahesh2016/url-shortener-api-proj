@@ -6,7 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add DbContext (SQLite)
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("Sqlite")));
+    options.UseSqlite(builder.Configuration.GetConnectionString("SqlServer")));
 
 var dbPath = @"C:\temp\urls.db";
 
@@ -24,7 +24,7 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
