@@ -5,13 +5,24 @@ using url_shortener_api.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add DbContext (SQLite)
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("SqlServer")));
 
-var dbPath = @"C:\temp\urls.db";
+var provider = builder.Configuration["DatabaseProvider"];
 
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite($"Data Source={dbPath}"));
+if (provider == "SqlServer")
+{
+
+    builder.Services.AddDbContext<AppDbContext>(options =>
+       options.UseSqlServer(
+           builder.Configuration.GetConnectionString("SqlServer")));
+}
+else
+{
+    var dbPath = @"C:\temp\urls.db";
+
+    builder.Services.AddDbContext<AppDbContext>(options =>
+        options.UseSqlite($"Data Source={dbPath}"));
+}
+
 
 builder.Services.AddCors(options =>
 {
@@ -23,6 +34,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+app.UseDeveloperExceptionPage();
 
 if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
