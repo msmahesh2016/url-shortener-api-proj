@@ -10,11 +10,11 @@ namespace url_shortener_api.Data
 
         public DbSet<UrlMapping> Urls => Set<UrlMapping>();
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<UrlMapping>()
-                .HasIndex(x => x.ShortCode)
-                .IsUnique();
-        }
+        //protected override void OnModelCreating(ModelBuilder modelBuilder)
+        //{
+        //    modelBuilder.Entity<UrlMapping>()
+        //        .HasIndex(x => x.ShortCode)
+        //        .IsUnique();
+        //}
     }
 }
