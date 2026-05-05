@@ -45,11 +45,17 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 
 app.UseCors("allow");
 
-// Apply migrations automatically
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    db.Database.Migrate();
+    try
+    {
+        db.Database.EnsureCreated();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine(ex.ToString());
+    }
 }
 
 string GenerateShortCode()
@@ -124,7 +130,15 @@ app.MapGet("/{code}", async (AppDbContext db, string code) =>
     url.ClickCount++;
     await db.SaveChangesAsync();
 
-    return Results.Redirect(url.OriginalUrl);
+    var originalUrl = url.OriginalUrl;
+
+    // 🔥 FIX: ensure proper scheme
+    if (!originalUrl.StartsWith("http://") && !originalUrl.StartsWith("https://"))
+    {
+        originalUrl = "https://" + originalUrl;
+    }
+
+    return Results.Redirect(originalUrl);
 });
 
 app.Run();
