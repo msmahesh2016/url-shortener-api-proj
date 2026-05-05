@@ -132,7 +132,6 @@ app.MapGet("/{code}", async (AppDbContext db, string code) =>
 
     var originalUrl = url.OriginalUrl;
 
-    // 🔥 FIX: ensure proper scheme
     if (!originalUrl.StartsWith("http://") && !originalUrl.StartsWith("https://"))
     {
         originalUrl = "https://" + originalUrl;
